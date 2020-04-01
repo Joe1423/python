@@ -22,9 +22,14 @@ def run_game():
     #Make a group of bullets and aliens
     bullets = Group()
     aliens = Group()
+    stars = Group()
 
     #Create a fleet of aliens.
     gf.create_fleet(ai_settings, screen, aliens, ship)
+
+    #Create the stars
+    gf.create_star(ai_settings, screen, stars)
+
 
     #Start the main loop for the game
     while True:
@@ -34,14 +39,17 @@ def run_game():
         #Update ship movement based on keypresses
         ship.update()
 
-        #Mange the bullets movement
+        #Manage the bullets movement
         bullets.update()
+
+        #Update the stars position
+        stars.update(ai_settings)
 
         #Update and Get rid of the bullets that have dissapeared
         gf.update_bullets(bullets)
 
         #Redraw and update the screen
-        gf.update_screen(ai_settings, screen, ship, bullets, aliens)
+        gf.update_screen(ai_settings, screen, ship, bullets, aliens, stars)
         
 
 run_game()

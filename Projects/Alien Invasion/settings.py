@@ -15,3 +15,9 @@ class Settings():
         self.bullet_height = 15
         self.bullet_color = 247, 13, 26
         self.bullets_allowed = 3
+
+        #Star settings
+        self.star_height = 2
+        self.star_width = 2
+        self.star_color = 255, 255, 204
+        self.star_max = 15

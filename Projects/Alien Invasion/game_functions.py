@@ -2,6 +2,7 @@ import sys
 import pygame
 from bullet import Bullet
 from alien import Alien
+from stars import Star
 
 def check_events(ship, ai_settings, screen, bullets):
     """Respond to keypresses and mouse events."""
@@ -37,7 +38,7 @@ def check_keyup_events(event, ship):
         ship.moving_left = False
 
                         
-def update_screen(ai_settings, screen, ship, bullets, aliens):
+def update_screen(ai_settings, screen, ship, bullets, aliens, stars):
     """Update images on the screen and flip to the new screen."""
     #Redraw the screen during each pass through the loop
     screen.fill(ai_settings.bg_color)
@@ -48,6 +49,9 @@ def update_screen(ai_settings, screen, ship, bullets, aliens):
     ship.blitme()
     #Draw the alien fleet
     aliens.draw(screen)
+    #Draw star group
+    for star in stars:
+        star.draw()
 
     #Make the most recently drawn screen visible
     pygame.display.flip()
@@ -110,3 +114,15 @@ def get_number_rows(ai_settings, ship_height, alien_height):
     return number_rows
 
 
+def create_star(ai_settings, screen, stars):
+    """Add stars to the group until it reach its limit"""
+    count = 0
+    while count < ai_settings.star_max:
+        new_star = Star(ai_settings, screen)
+        stars.add(new_star)
+        count += 1
+
+
+# def update_stars(stars):
+#     """Change the position of the stars."""
+#     stars.update()
