@@ -40,13 +40,13 @@ def run_game():
         ship.update()
 
         #Manage the bullets movement
-        bullets.update()
+        gf.update_bullets(ai_settings, screen, ship, aliens, bullets)
+
+        #Move the aliens
+        gf.update_aliens(ai_settings, aliens, ship)
 
         #Update the stars position
-        stars.update(ai_settings)
-
-        #Update and Get rid of the bullets that have dissapeared
-        gf.update_bullets(bullets)
+        gf.update_stars(stars, ai_settings)
 
         #Redraw and update the screen
         gf.update_screen(ai_settings, screen, ship, bullets, aliens, stars)

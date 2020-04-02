@@ -57,7 +57,7 @@ def update_screen(ai_settings, screen, ship, bullets, aliens, stars):
     pygame.display.flip()
 
 
-def update_bullets(bullets):
+def update_bullets(ai_settings, screen, ship, aliens, bullets):
     """Update bullet's positions and get rid of old bullets."""
     #Update bullet positions
     bullets.update()
@@ -65,6 +65,18 @@ def update_bullets(bullets):
     for bullet in bullets.copy():
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
+    check_bullet_alien_collisions(ai_settings, screen, ship, alliens, bullets)
+
+
+def check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets):
+    """Respond to bullet-alien collisions."""
+    #Check for any bullets that have hit aliens, if so, get rid of the bullet an the allien
+    collisions = pygame.sprite.groupcollide(bullets, aliens, False, True)
+    if len(aliens) == 0:
+        #Destroy the existing bullets and create a new fleet.
+        bullets.empty()
+        create_fleet(ai_settings, screen, aliens, ship)
+
 
 def fire_bullet(ai_settings, screen, ship, bullets):
     """Fire a bullet if limit hasn't been reached yet."""
@@ -123,6 +135,32 @@ def create_star(ai_settings, screen, stars):
         count += 1
 
 
-# def update_stars(stars):
-#     """Change the position of the stars."""
-#     stars.update()
+def update_stars(stars, ai_settings):
+    """Change the position of the stars."""
+    stars.update(ai_settings)
+
+
+def update_aliens(ai_settings, aliens, ship):
+    """Check if the fleet is at an edge then update the position of aliens in the fleet."""
+    check_fleet_edges(ai_settings, aliens)
+    aliens.update()
+    #Look for alien-ship collisions
+    if pygame.sprite.spridecollideany(ship, aliens):
+        print("Ship hit!")
+
+
+def check_fleet_edges(ai_settings, aliens):
+    """Respond appropriately if any aliens have reached and edge."""
+    for alien in aliens:
+        if alien.check_edges():
+            change_fleet_direction(ai_settings, aliens)
+            break
+
+
+def change_fleet_direction(ai_settings, aliens):
+    """Drop the entire fleet and change the fleet's direction."""
+    for alien in aliens.sprites():
+        alien.rect.y += ai_settings.fleet_drop_speed
+    ai_settings.fleet_direction *= -1
+
+
