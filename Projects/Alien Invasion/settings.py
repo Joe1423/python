@@ -8,6 +8,7 @@ class Settings():
         self.screen_height = 700
         self.bg_color = (0, 0, 102)
         self.ship_speed_factor = 1.5
+        self.ship_limit = 3
 
         #Alien settings
         self.alien_speed_factor = 1
