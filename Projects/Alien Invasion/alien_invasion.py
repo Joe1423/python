@@ -5,6 +5,7 @@ from settings import Settings
 from ship import Ship
 from pygame.sprite import Group
 from game_stats import GameStats
+from button import Button
 
 def run_game():
     #Initialize game and create a screen object
@@ -16,6 +17,9 @@ def run_game():
         (ai_settings.screen_width, ai_settings.screen_height))
 
     pygame.display.set_caption("Alien Invasion")
+
+    #Make the play button.
+    play_button = Button(ai_settings, screen, 'play')
 
     #Creat an instance of to store game statistics
     stats = GameStats(ai_settings)
@@ -38,7 +42,7 @@ def run_game():
     #Start the main loop for the game
     while True:
         #Watch for keyboard and mouse events
-        gf.check_events(ship, ai_settings, screen, bullets)
+        gf.check_events(ship, ai_settings, screen, bullets, stats, play_button, aliens)
 
         if stats.game_active:
             #Update ship movement based on keypresses
@@ -51,6 +55,6 @@ def run_game():
             gf.update_stars(stars, ai_settings)
             
         #Redraw and update the screen
-        gf.update_screen(ai_settings, screen, ship, bullets, aliens, stars)
+        gf.update_screen(ai_settings, screen, ship, bullets, aliens, stars, stats, play_button)
 
 run_game()
