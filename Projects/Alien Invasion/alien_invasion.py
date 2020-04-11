@@ -6,6 +6,7 @@ from ship import Ship
 from pygame.sprite import Group
 from game_stats import GameStats
 from button import Button
+from scoreboard import Scoreboard
 
 def run_game():
     #Initialize game and create a screen object
@@ -23,7 +24,7 @@ def run_game():
 
     #Creat an instance of to store game statistics
     stats = GameStats(ai_settings)
-
+    sb = Scoreboard(ai_settings, screen, stats)
     #Display the ship
     ship = Ship(screen, ai_settings)
 
@@ -48,13 +49,13 @@ def run_game():
             #Update ship movement based on keypresses
             ship.update()
             #Manage the bullets movement
-            gf.update_bullets(ai_settings, screen, ship, aliens, bullets)
+            gf.update_bullets(ai_settings, screen, ship, aliens, bullets, sb, stats)
             #Move the aliens
             gf.update_aliens(ai_settings, ship, screen, aliens, bullets, stats)
             #Update the stars position
             gf.update_stars(stars, ai_settings)
             
         #Redraw and update the screen
-        gf.update_screen(ai_settings, screen, ship, bullets, aliens, stars, stats, play_button)
+        gf.update_screen(ai_settings, screen, ship, bullets, aliens, stars, stats, play_button, sb)
 
 run_game()
