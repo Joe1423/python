@@ -43,7 +43,7 @@ def run_game():
     #Start the main loop for the game
     while True:
         #Watch for keyboard and mouse events
-        gf.check_events(ship, ai_settings, screen, bullets, stats, play_button, aliens)
+        gf.check_events(ship, ai_settings, screen, bullets, stats, play_button, aliens, sb)
 
         if stats.game_active:
             #Update ship movement based on keypresses
@@ -51,7 +51,7 @@ def run_game():
             #Manage the bullets movement
             gf.update_bullets(ai_settings, screen, ship, aliens, bullets, sb, stats)
             #Move the aliens
-            gf.update_aliens(ai_settings, ship, screen, aliens, bullets, stats)
+            gf.update_aliens(ai_settings, ship, screen, aliens, bullets, stats, sb)
             #Update the stars position
             gf.update_stars(stars, ai_settings)
             

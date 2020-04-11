@@ -5,7 +5,7 @@ from alien import Alien
 from stars import Star
 from time import sleep
 
-def check_events(ship, ai_settings, screen, bullets, stats, play_button, aliens):
+def check_events(ship, ai_settings, screen, bullets, stats, play_button, aliens, sb):
     """Respond to keypresses and mouse events."""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -16,10 +16,10 @@ def check_events(ship, ai_settings, screen, bullets, stats, play_button, aliens)
             check_keyup_events(event, ship)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            check_play_button(stats, play_button, mouse_x, mouse_y, ai_settings, screen, ship, aliens, bullets)
+            check_play_button(stats, play_button, mouse_x, mouse_y, ai_settings, screen, ship, aliens, bullets, sb)
 
 
-def check_play_button(stats, play_button, mouse_x, mouse_y, ai_settings, screen, ship, aliens, bullets):
+def check_play_button(stats, play_button, mouse_x, mouse_y, ai_settings, screen, ship, aliens, bullets, sb):
     """Start a new game when the player clicks play."""
     button_clicked = play_button.rect.collidepoint(mouse_x, mouse_y)
     if button_clicked and not stats.game_active:
@@ -30,6 +30,12 @@ def check_play_button(stats, play_button, mouse_x, mouse_y, ai_settings, screen,
         #Reset game statistics
         stats.reset_stats()
         stats.game_active = True
+
+        #Reset the scoreboards images
+        sb.prep_score()
+        sb.prep_high_score()
+        sb.prep_level()
+        sb.prep_ships()
 
         #Empty the list of aliens and bullets
         aliens.empty()
@@ -112,6 +118,11 @@ def check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets, sb
         #Destroy the existing bullets, speed up game and create a new fleet.
         bullets.empty()
         ai_settings.increase_speed()
+
+        #Increase level.
+        stats.level += 1
+        sb.prep_level()
+
         create_fleet(ai_settings, screen, aliens, ship)
 
 
@@ -177,15 +188,15 @@ def update_stars(stars, ai_settings):
     stars.update(ai_settings)
 
 
-def update_aliens(ai_settings, ship, screen, aliens, bullets, stats):
+def update_aliens(ai_settings, ship, screen, aliens, bullets, stats, sb):
     """Check if the fleet is at an edge then update the position of aliens in the fleet."""
     check_fleet_edges(ai_settings, aliens)
     aliens.update()
     #Look for alien-ship collisions
     if pygame.sprite.spritecollideany(ship, aliens):
-        ship_hit(ai_settings, stats, screen, ship, aliens, bullets)
+        ship_hit(ai_settings, stats, screen, ship, aliens, bullets, sb)
     #Look for aliens hitting the bottom of the screen
-    check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets)
+    check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets, sb)
 
 
 def check_fleet_edges(ai_settings, aliens):
@@ -203,11 +214,13 @@ def change_fleet_direction(ai_settings, aliens):
     ai_settings.fleet_direction *= -1
 
 
-def ship_hit(ai_settings, stats, screen, ship, aliens, bullets):
+def ship_hit(ai_settings, stats, screen, ship, aliens, bullets, sb):
     """Respond to being hit by an alien."""
     if stats.ships_left > 0:
         #Decrement ships left
         stats.ships_left -= 1
+        #Update scoreboard
+        sb.prep_ships()
         #Empty the list of aliens and bullets
         aliens.empty()
         bullets.empty()
@@ -221,13 +234,13 @@ def ship_hit(ai_settings, stats, screen, ship, aliens, bullets):
         pygame.mouse.set_visible(True)
         
 
-def check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets):
+def check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets, sb):
     """Check if any aliens have reached the bottom of the screen."""
     screen_rect = screen.get_rect()
     for alien in aliens.sprites():
         if alien.rect.bottom >= screen_rect.bottom:
             #React the same as if the ship got hit.
-            ship_hit(ai_settings, stats, stats, screen, ship, aliens, bullets)
+            ship_hit(ai_settings, stats, stats, screen, ship, aliens, bullets, sb)
             break
 
 
